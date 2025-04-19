@@ -1,0 +1,34 @@
+{
+  "id": "95ca5e2d-378a-4261-a3cb-af99e4eb8e70",
+  "board": [
+    [
+      {
+        "Occupied": "X"
+      },
+      {
+        "Occupied": "X"
+      },
+      {
+        "Occupied": "X"
+      }
+    ],
+    [
+      "Empty",
+      {
+        "Occupied": "O"
+      },
+      "Empty"
+    ],
+    [
+      "Empty",
+      "Empty",
+      {
+        "Occupied": "O"
+      }
+    ]
+  ],
+  "current_turn": "X",
+  "status": {
+    "Won": "X"
+  }
+}

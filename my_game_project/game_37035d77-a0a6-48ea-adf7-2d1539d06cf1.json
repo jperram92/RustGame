@@ -1,0 +1,40 @@
+{
+  "id": "37035d77-a0a6-48ea-adf7-2d1539d06cf1",
+  "board": [
+    [
+      {
+        "Occupied": "X"
+      },
+      {
+        "Occupied": "X"
+      },
+      {
+        "Occupied": "O"
+      }
+    ],
+    [
+      {
+        "Occupied": "O"
+      },
+      {
+        "Occupied": "O"
+      },
+      {
+        "Occupied": "X"
+      }
+    ],
+    [
+      {
+        "Occupied": "X"
+      },
+      {
+        "Occupied": "O"
+      },
+      {
+        "Occupied": "X"
+      }
+    ]
+  ],
+  "current_turn": "X",
+  "status": "Draw"
+}
