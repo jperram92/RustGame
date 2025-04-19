@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic-Tac-Toe Client</title>
+    <title>Tic-Tac-Toe Online</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,11 +11,11 @@
             margin: 0 auto;
             padding: 20px;
         }
-
+        
         h1 {
             text-align: center;
         }
-
+        
         .game-board {
             display: grid;
             grid-template-columns: repeat(3, 100px);
@@ -24,7 +24,7 @@
             margin: 20px auto;
             width: 310px;
         }
-
+        
         .cell {
             width: 100px;
             height: 100px;
@@ -35,34 +35,41 @@
             font-size: 48px;
             cursor: pointer;
         }
-
+        
         .controls {
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
         }
-
+        
         .status {
             margin-top: 20px;
             text-align: center;
             font-size: 24px;
         }
-
+        
         button {
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
         }
-
+        
         select {
             padding: 10px;
             font-size: 16px;
         }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
-    <h1>Tic-Tac-Toe</h1>
-
+    <h1>Tic-Tac-Toe Online</h1>
+    
     <div class="controls">
         <button id="new-game">New Game</button>
         <select id="ai-difficulty">
@@ -72,7 +79,7 @@
         </select>
         <button id="ai-move">AI Move</button>
     </div>
-
+    
     <div class="game-board" id="board">
         <div class="cell" data-row="0" data-col="0"></div>
         <div class="cell" data-row="0" data-col="1"></div>
@@ -84,37 +91,39 @@
         <div class="cell" data-row="2" data-col="1"></div>
         <div class="cell" data-row="2" data-col="2"></div>
     </div>
-
+    
     <div class="status" id="status">Start a new game</div>
 
+    <footer>
+        Built with Rust, Tokio, and Axum. Hosted on Render and GitHub Pages.
+    </footer>
+    
     <script>
         // API URL - Change this to your Render URL when deployed
-        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'http://localhost:3000'  // Use localhost when testing locally
-            : 'https://your-app-name.onrender.com';  // Replace with your actual Render URL
-
+        const API_URL = 'https://your-app-name.onrender.com';  // Replace with your actual Render URL
+        
         // Game state
         let gameId = null;
         let gameState = null;
-
+        
         // DOM elements
         const board = document.getElementById('board');
         const status = document.getElementById('status');
         const newGameButton = document.getElementById('new-game');
         const aiMoveButton = document.getElementById('ai-move');
         const aiDifficultySelect = document.getElementById('ai-difficulty');
-
+        
         // Initialize the game
         function init() {
             // Add event listeners
             newGameButton.addEventListener('click', createNewGame);
             aiMoveButton.addEventListener('click', makeAIMove);
             board.addEventListener('click', handleCellClick);
-
+            
             // Disable AI move button initially
             aiMoveButton.disabled = true;
         }
-
+        
         // Create a new game
         async function createNewGame() {
             try {
@@ -127,26 +136,26 @@
                         starting_player: 'X',
                     }),
                 });
-
+                
                 if (!response.ok) {
                     throw new Error('Failed to create game');
                 }
-
+                
                 gameState = await response.json();
                 gameId = gameState.id;
-
+                
                 // Update the UI
                 updateBoard();
                 updateStatus();
-
+                
                 // Enable AI move button
                 aiMoveButton.disabled = false;
             } catch (error) {
                 console.error('Error creating game:', error);
-                status.textContent = 'Error creating game';
+                status.textContent = 'Error creating game. Is the server running?';
             }
         }
-
+        
         // Handle cell click
         async function handleCellClick(event) {
             // Check if we have an active game
@@ -154,29 +163,29 @@
                 status.textContent = 'Please start a new game first';
                 return;
             }
-
+            
             // Check if the game is already over
             if (gameState.status !== 'InProgress') {
                 status.textContent = 'Game is already over';
                 return;
             }
-
+            
             // Get the clicked cell
             const cell = event.target;
             if (!cell.classList.contains('cell')) {
                 return;
             }
-
+            
             // Get the row and column
             const row = parseInt(cell.dataset.row);
             const col = parseInt(cell.dataset.col);
-
+            
             // Check if the cell is already occupied
             if (cell.textContent) {
                 status.textContent = 'Cell is already occupied';
                 return;
             }
-
+            
             // Make the move
             try {
                 const response = await fetch(`${API_URL}/games/${gameId}/move`, {
@@ -190,13 +199,13 @@
                         player: gameState.current_turn,
                     }),
                 });
-
+                
                 if (!response.ok) {
                     throw new Error('Failed to make move');
                 }
-
+                
                 gameState = await response.json();
-
+                
                 // Update the UI
                 updateBoard();
                 updateStatus();
@@ -205,7 +214,7 @@
                 status.textContent = 'Error making move';
             }
         }
-
+        
         // Make an AI move
         async function makeAIMove() {
             // Check if we have an active game
@@ -213,16 +222,16 @@
                 status.textContent = 'Please start a new game first';
                 return;
             }
-
+            
             // Check if the game is already over
             if (gameState.status !== 'InProgress') {
                 status.textContent = 'Game is already over';
                 return;
             }
-
+            
             // Get the difficulty
             const difficulty = aiDifficultySelect.value;
-
+            
             // Make the AI move
             try {
                 const response = await fetch(`${API_URL}/games/${gameId}/ai-move`, {
@@ -234,13 +243,13 @@
                         difficulty,
                     }),
                 });
-
+                
                 if (!response.ok) {
                     throw new Error('Failed to make AI move');
                 }
-
+                
                 gameState = await response.json();
-
+                
                 // Update the UI
                 updateBoard();
                 updateStatus();
@@ -249,20 +258,20 @@
                 status.textContent = 'Error making AI move';
             }
         }
-
+        
         // Update the board UI
         function updateBoard() {
             // Get all cells
             const cells = document.querySelectorAll('.cell');
-
+            
             // Update each cell
             cells.forEach(cell => {
                 const row = parseInt(cell.dataset.row);
                 const col = parseInt(cell.dataset.col);
-
+                
                 // Get the cell value
                 const cellValue = gameState.board[row][col];
-
+                
                 // Update the cell text
                 if (cellValue === 'Empty') {
                     cell.textContent = '';
@@ -273,7 +282,7 @@
                 }
             });
         }
-
+        
         // Update the status UI
         function updateStatus() {
             if (gameState.status === 'InProgress') {
@@ -284,7 +293,7 @@
                 status.textContent = 'Game ended in a draw';
             }
         }
-
+        
         // Initialize the game
         init();
     </script>
