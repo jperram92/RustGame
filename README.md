@@ -18,8 +18,8 @@ You can play the game online at: [https://jperram92.github.io/RustGame/](https:/
 - `my_game_project/` - The Rust backend server
   - Built with Axum, Tokio, and Serde
   - Implements game logic and AI
-- `client-deploy/` - The web client for GitHub Pages
-- `docs/` - Documentation and learning resources
+- `docs/` - Documentation and the web client for GitHub Pages
+
 
 ## Development
 

@@ -4,7 +4,7 @@ This is the web client for the Tic-Tac-Toe Online game. It connects to a Rust-ba
 
 ## How to Play
 
-1. Visit the hosted version at [jperram92.github.io/RustGame](https://jperram92.github.io/RustGame)
+1. Visit the hosted version at [jperram92.github.io/RustGame/docs](https://jperram92.github.io/RustGame/docs)
 2. Click "New Game" to start a new game
 3. Make moves by clicking on the board
 4. Use the "AI Move" button to have the AI make a move
@@ -39,7 +39,7 @@ This client can be easily deployed to GitHub Pages:
 4. Select the main branch as the source
 5. Click "Save"
 
-Your client will be available at `https://jperram92.github.io/RustGame`
+Your client will be available at `https://jperram92.github.io/RustGame/docs`
 
 ## Technologies Used
 
