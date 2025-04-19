@@ -385,6 +385,173 @@ fn get_max_depth(&self) -> usize {
 - **Randomness**: Adding unpredictability at lower difficulties
 - **Perfect Play**: Unbeatable AI at the highest difficulty
 
-### Next Steps
+## Commit 4: Async HTTP Server
 
-In our next commit, we'll implement a simple HTTP server using async Rust.
+### Asynchronous Programming with Tokio
+
+In our fourth commit of Phase 2, we've implemented an async HTTP server using Tokio:
+
+```rust
+#[tokio::main]
+async fn main() {
+    // Initialize tracing
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::INFO)
+        .init();
+
+    // Create the application state
+    let state = AppState::new();
+
+    // Create the router
+    let app = create_router().with_state(state);
+
+    // Start the server
+    Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
+}
+```
+
+**Key concepts about async Rust:**
+
+- **Futures**: Represent asynchronous computations that may not have completed yet
+- **Async/Await**: Syntax for working with futures in a more readable way
+- **Tokio Runtime**: Executes async code efficiently on a thread pool
+- **Non-Blocking I/O**: Allows handling many connections with few threads
+
+### RESTful API with Axum
+
+We've built a RESTful API using the Axum framework:
+
+```rust
+pub fn create_router() -> Router<AppState> {
+    Router::new()
+        // Game routes
+        .route("/games", get(handlers::list_games))
+        .route("/games", post(handlers::create_game))
+        .route("/games/:id", get(handlers::get_game))
+        .route("/games/:id/move", post(handlers::make_move))
+        .route("/games/:id/ai-move", post(handlers::make_ai_move))
+        // Add the CORS layer
+        .layer(cors)
+}
+```
+
+**Axum framework concepts:**
+
+- **Routing**: Declarative routing with HTTP method handlers
+- **Extractors**: Type-based extraction of request data
+- **Handlers**: Async functions that process requests
+- **Middleware**: Composable request/response transformations
+
+### Shared State with Tokio Synchronization
+
+We've implemented shared state using Tokio's synchronization primitives:
+
+```rust
+pub struct AppState {
+    pub games: Arc<RwLock<HashMap<Uuid, GameState>>>,
+}
+```
+
+**Shared state concepts:**
+
+- **Arc**: Atomic reference counting for thread-safe sharing
+- **RwLock**: Reader-writer lock for concurrent access
+- **Async Locks**: Non-blocking locks that work with async/await
+- **State Management**: Sharing application state between handlers
+
+### JSON Serialization for API Communication
+
+We've used Serde for JSON serialization in our API:
+
+```rust
+#[derive(Debug, Serialize)]
+pub struct GamesListResponse {
+    pub games: Vec<GameSummary>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct MakeMoveRequest {
+    pub row: usize,
+    pub col: usize,
+    pub player: Player,
+}
+```
+
+**API serialization concepts:**
+
+- **Request/Response Types**: Strongly typed API interfaces
+- **Derive Macros**: Automatic serialization implementation
+- **JSON Extraction**: Automatic parsing of request bodies
+- **Content Negotiation**: Handling different content types
+
+### Web Client Integration
+
+We've created a simple HTML/JavaScript client for our API:
+
+```javascript
+async function makeAIMove() {
+    // Make the AI move
+    try {
+        const response = await fetch(`${API_URL}/games/${gameId}/ai-move`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                difficulty,
+            }),
+        });
+
+        gameState = await response.json();
+
+        // Update the UI
+        updateBoard();
+        updateStatus();
+    } catch (error) {
+        console.error('Error making AI move:', error);
+    }
+}
+```
+
+**Web client concepts:**
+
+- **Fetch API**: Modern JavaScript API for making HTTP requests
+- **Async/Await**: Clean syntax for handling asynchronous operations
+- **JSON Handling**: Parsing and stringifying JSON data
+- **DOM Manipulation**: Updating the UI based on server responses
+
+## Project Complete!
+
+Congratulations! We've completed Phase 2 of our Rust game project, covering:
+
+1. **Code Organization and Modularity**
+   - Proper module structure
+   - Library and binary separation
+   - Advanced error handling
+
+2. **Serialization and Game State Management**
+   - Using Serde for serialization
+   - Saving and loading game state
+   - Game history tracking
+
+3. **AI and Advanced Algorithms**
+   - Implementing the minimax algorithm
+   - Trait-based design
+   - Different difficulty levels
+
+4. **Asynchronous Programming**
+   - Building a RESTful API with Axum
+   - Async/await with Tokio
+   - Concurrent game handling
+
+This project has introduced you to many advanced Rust concepts and patterns. As you continue your Rust journey, you might want to explore:
+
+- **More Advanced Concurrency**: Channels, actors, and work stealing
+- **WebAssembly**: Compiling Rust to run in the browser
+- **Embedded Systems**: Using Rust for low-level programming
+- **Advanced Type System Features**: GATs, const generics, and more
+
+Happy coding in Rust!
